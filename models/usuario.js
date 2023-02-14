@@ -1,7 +1,7 @@
 const { Schema, model } = require('mongoose');
 
 const UsuarioSchema = Schema({
-    fechaCreacion: {
+    fecha_creacion: {
         type: Date,
         default: new Date()
     },
@@ -15,17 +15,25 @@ const UsuarioSchema = Schema({
         required: true,
     },
     avatar: {
-        type: String
-    },
-    metodo: {
         type: String,
-        default: "normal"
+        default: "avatar1"
+    },
+    rol: {
+        type: String,
+        default: "usuario"
+    },
+    peso:{
+        type: Number,
+        required: true
+    },
+    estado_animico:{
+        type: Number,
+        default: 5
     }
 }, { collection: 'usuarios' });
 
 UsuarioSchema.method('toJSON', function() {
     const { __v, _id, password, ...object } = this.toObject();
-
     object.uid = _id;
     return object;
 });
