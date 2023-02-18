@@ -1,6 +1,6 @@
 const { Router } = require('express');
 const { check } = require('express-validator');
-const { obtenerUsuario, crearUsuario, actualizarUsuario } = require('../controllers/usuarios');
+const { obtenerUsuario, crearUsuario, actualizarUsuario, borrarUsuario, cambiarContrasena } = require('../controllers/usuarios');
 const { validarCampos } = require('../middleware/validarcampos');
 const { validarJWT } = require('../middleware/validarjwt');
 
@@ -29,5 +29,19 @@ router.put('/:id', [
     check('estado_animico', 'El argumento estado_animico es opcional').isNumeric().optional(),
     validarCampos
 ], actualizarUsuario);
+
+router.delete('/:id', [
+    validarJWT,
+    check('id', 'El identificador no es válido').isMongoId(),
+    validarCampos
+], borrarUsuario);
+
+router.post('/nuevaContrasena', [
+    validarJWT,
+    check('contrasenaActual', 'El campo contrasenaAntigua es obligatoria').not().isEmpty(),
+    check('contrasenaNueva', 'La contraseña nueva es obligatoria').not().isEmpty(),
+    check('contrasenaNuevaRepite', 'La confirmación de la contraseña nueva es obligatoria').not().isEmpty(),
+    validarCampos
+], cambiarContrasena)
 
 module.exports = router;

@@ -1,7 +1,7 @@
 const Usuario = require('../models/usuario');
 const { infoToken } = require('../helpers/infotoken');
 const fs = require('fs');
-const bcrypt = require('bcryptjs')
+const bcrypt = require('bcryptjs');
 
 const obtenerUsuario = async(req,res) =>{
     const id = req.query.id;
@@ -221,4 +221,54 @@ const borrarUsuario = async(req, res = response) => {
     }
 }
 
-module.exports = { obtenerUsuario, crearUsuario, actualizarUsuario, borrarUsuario};
+const cambiarContrasena = async(req, res = response) =>{
+    const token = req.header('x-token');
+    const { contrasenaActual, contrasenaNueva, contrasenaNuevaRepite } = req.body;
+    try {
+        const idToken = infoToken(token).uid;
+        const existeUsuario = await Usuario.findById(idToken);
+        if(!existeUsuario){
+            return res.status(404).json({
+                ok: false,
+                msg: "No existe un usuario con ese id"
+            });
+        }
+        if(contrasenaNueva !== contrasenaNuevaRepite){
+            return res.status(406).json({
+                ok: false,
+                msg: 'La contraseña nueva y la nueva repetida no coinciden'
+            });
+        }
+        const passwordUsu = existeUsuario.password;
+        bcrypt.compare(contrasenaActual, passwordUsu,async (err, resComp) => {
+            if (err) {
+                return res.status(400).json({
+                    ok: false,
+                    msg: 'Error al comparar contraseña'
+                });
+            }
+            if (resComp === false) {
+                return res.status(406).json({
+                    ok: false,
+                    msg: 'La contraseña actual no coincide con la introducida'
+                });
+            }else{
+                const salt = bcrypt.genSaltSync();
+                const cpassword = bcrypt.hashSync(contrasenaNueva, salt);
+                const usuario = await Usuario.findByIdAndUpdate(idToken, { password: cpassword }, { new: true });
+                await usuario.save();
+                return res.status(201).json({
+                    ok: true,
+                    msg: 'Contraseña cambiada correctamente'
+                });
+            }
+        });    
+    } catch (error) {
+        console.log(error);
+        return res.status(400).json({
+            ok: false,
+            msg: 'Hubo un error al intentar cambiar la contraseña'
+        })
+    }
+}
+module.exports = { obtenerUsuario, crearUsuario, actualizarUsuario, borrarUsuario, cambiarContrasena};

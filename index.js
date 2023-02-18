@@ -16,13 +16,15 @@ app.use(bodyParser.urlencoded({ extended: true }))
 app.use(cors());
 app.use(express.json());
 app.use(fileUpload({
+    fileSize: 5000000,
+    fieldSize: 5000000,
     createParentPath: true,
     debug: true,
 }));
 
 app.use('/api/login', require('./routes/auth'));
 app.use('/api/usuarios', require('./routes/usuarios'));
-// app.use('/api/planes', require('./routes/planes'));
+app.use('/api/planes', require('./routes/planes'));
 // app.use('/api/platos', require('./routes/platos'));
 // app.use('/api/upload', require('./routes/uploads'));
 
