@@ -25,6 +25,7 @@ app.use(fileUpload({
 app.use('/api/login', require('./routes/auth'));
 app.use('/api/usuarios', require('./routes/usuarios'));
 app.use('/api/planes', require('./routes/planes'));
+app.use('/api/suscripciones', require('./routes/suscripciones'));
 // app.use('/api/platos', require('./routes/platos'));
 // app.use('/api/upload', require('./routes/uploads'));
 
