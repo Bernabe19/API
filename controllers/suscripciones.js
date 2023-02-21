@@ -3,63 +3,76 @@ const Plan = require('../models/plan');
 const Usuario = require('../models/usuario');
 const { infoToken } = require('../helpers/infotoken');
 
-const obtenerSucripcion = async(req,res) =>{
-    const id = req.query.id;
+const obtenerSuscripcion = async(req,res) =>{
+    const { id, fecha1, fecha2 } = req.query;
     const token = req.header('x-token');
     try {
-        let usuario, total;
+        let suscripcion, total, platos = null;
         const idToken = infoToken(token).uid;
-        const rolToken = infoToken(token).rol;
         const usuarioToken = await Usuario.findById(idToken);
-
+        let fecha1Mod, fecha2Mod;
+        if(fecha1){
+            fecha1Mod = new Date(fecha1);
+        }
+        if(fecha2){
+            fecha2Mod = new Date(fecha2);
+        }
         if (!token) {
             return res.status(401).json({
                 ok: false,
                 msg: "No se reconoce el token en la cabecera"
             });
         }
-
+        if (!usuarioToken) {
+            return res.status(404).json({
+                ok: false,
+                msg: "No existe el usuario con ese id"
+            });
+        }
         if(id){
-            const usuarioParam = await Usuario.findById(id);
-            if(!usuarioParam){
+            const susParam = await Suscripcion.findById(id);
+            if(!susParam){
                 return res.status(404).json({
                     ok: false,
-                    msg: "No existe un usuario con ese id"
+                    msg: "No existe una suscripcion con ese id"
                 });
             }
-            if(idToken !== id && usuarioToken.rol !== "admin"){
-                return res.status(403).json({
-                    ok: false,
-                    msg: "No puede acceder a la información de otro usuario"
-                });
-            }
-            [usuario, total] = await Promise.all([
-                Usuario.findById(id),
-                Usuario.count() 
+            [suscripcion, total] = await Promise.all([
+                Suscripcion.findById(id),
+                Suscripcion.find({id_usuario : idToken}).count() || 0 
             ]);
-        }else if(!id){
-            if(rolToken !== "admin" || usuarioToken.rol !== "admin"){
-                return res.status(403).json({
-                    ok: false,
-                    msg: 'Acción permitida solo a Adminsitrador'
-                });
+        }else{
+            if(fecha1 && fecha2){
+                [suscripcion, total] = await Promise.all([
+                    Suscripcion.find({$and: [{fecha_inicio: {$gte: fecha1Mod}},{fecha_inicio: {$lte: fecha2Mod}}]}).populate('id_plan','nombre caracteristicas').sort({fecha_inicio : "desc"}).exec(),
+                    Suscripcion.find({id_usuario : idToken}).count() || 0 
+                ]);
+            }else if(fecha1){
+                [suscripcion, total] = await Promise.all([
+                    Suscripcion.find({fecha_inicio:{$gte: fecha1Mod}}).populate('id_plan','nombre caracteristicas').sort({fecha_inicio : "desc"}).exec(),
+                    Suscripcion.find({id_usuario : idToken}).count() || 0 
+                ]);
+                console.log(suscripcion)
+            }else{
+                [suscripcion, total] = await Promise.all([
+                Suscripcion.find({id_usuario : idToken}).populate('id_plan','nombre caracteristicas').sort({fecha_inicio : "desc"}).exec(),
+                Suscripcion.find({id_usuario : idToken}).count() || 0 
+                ]);
             }
-            [usuario, total] = await Promise.all([
-                Usuario.find(),
-                Usuario.count() 
-            ]);
         }
+        
         return res.status(201).json({
             ok: true,
-            msg: "Obtención de usuarios",
-            usuario,
-            total
+            msg: "Obtención de suscripciones",
+            suscripcion,
+            total,
+            platos
         });
     } catch (error) {
         console.log(error);
         return res.status(400).json({
             ok: false,
-            msg: 'Error al obtener usuario'
+            msg: 'Error al obtener suscripcion'
         });
     }
 }
@@ -164,4 +177,4 @@ const borrarSuscripcion = async (req,res) =>{
 
 }
 
-module.exports = { obtenerSucripcion, crearSuscripcion, borrarSuscripcion };
+module.exports = { obtenerSuscripcion, crearSuscripcion, borrarSuscripcion };
