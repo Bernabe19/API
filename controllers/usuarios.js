@@ -2,6 +2,9 @@ const Usuario = require('../models/usuario');
 const { infoToken } = require('../helpers/infotoken');
 const fs = require('fs');
 const bcrypt = require('bcryptjs');
+const Plato = require('../models/plato');
+const { borrarImagen } = require('../configuracion/configcloudinary');
+const Suscripcion = require('../models/suscripcion');
 
 const obtenerUsuario = async(req,res) =>{
     const id = req.query.id;
@@ -202,9 +205,15 @@ const borrarUsuario = async(req, res = response) => {
                 msg: 'No está autorizado a acceder a este recurso'
             });
         }
-        //Borrar entidades y archivos asociados a un usuario
-        
-        
+            const platosUsuario = await Plato.find({id_usuario:uid});
+            for (let i = 0; i < platosUsuario.length; i++) {
+                await borrarImagen(platosUsuario[i].imagen.public_id);
+                await Plato.findByIdAndDelete(platosUsuario[i]._id.toString());
+            }
+            const suscripcionesUsuario = await Suscripcion.find({id_usuario:uid});
+            for (let i = 0; i < suscripcionesUsuario.length; i++) {
+                await Suscripcion.findByIdAndDelete(suscripcionesUsuario[i]._id.toString());
+            }
         const resultado = await Usuario.findByIdAndRemove(uid);
         return res.status(200).json({
             ok: true,

@@ -19,15 +19,14 @@ app.use(fileUpload({
     fileSize: 5000000,
     fieldSize: 5000000,
     createParentPath: true,
-    debug: true,
+    debug: true
 }));
 
 app.use('/api/login', require('./routes/auth'));
 app.use('/api/usuarios', require('./routes/usuarios'));
 app.use('/api/planes', require('./routes/planes'));
 app.use('/api/suscripciones', require('./routes/suscripciones'));
-// app.use('/api/platos', require('./routes/platos'));
-// app.use('/api/upload', require('./routes/uploads'));
+app.use('/api/platos', require('./routes/platos'));
 
 
 require('dotenv').config();

@@ -1,7 +1,9 @@
 const Suscripcion = require('../models/suscripcion');
 const Plan = require('../models/plan');
+const Plato = require('../models/plato');
 const Usuario = require('../models/usuario');
 const { infoToken } = require('../helpers/infotoken');
+const { borrarImagen } = require('../configuracion/configcloudinary');
 
 const obtenerSuscripcion = async(req,res) =>{
     const { id, fecha1, fecha2 } = req.query;
@@ -46,21 +48,25 @@ const obtenerSuscripcion = async(req,res) =>{
                 [suscripcion, total] = await Promise.all([
                     Suscripcion.find({$and: [{fecha_inicio: {$gte: fecha1Mod}},{fecha_inicio: {$lte: fecha2Mod}}]}).populate('id_plan','nombre caracteristicas').sort({fecha_inicio : "desc"}).exec(),
                     Suscripcion.find({id_usuario : idToken}).count() || 0 
-                ]);
+                ]); 
             }else if(fecha1){
                 [suscripcion, total] = await Promise.all([
                     Suscripcion.find({fecha_inicio:{$gte: fecha1Mod}}).populate('id_plan','nombre caracteristicas').sort({fecha_inicio : "desc"}).exec(),
                     Suscripcion.find({id_usuario : idToken}).count() || 0 
                 ]);
-                console.log(suscripcion)
             }else{
                 [suscripcion, total] = await Promise.all([
-                Suscripcion.find({id_usuario : idToken}).populate('id_plan','nombre caracteristicas').sort({fecha_inicio : "desc"}).exec(),
-                Suscripcion.find({id_usuario : idToken}).count() || 0 
+                    Suscripcion.find({id_usuario : idToken}).populate('id_plan','nombre caracteristicas').sort({fecha_inicio : "desc"}).exec(),
+                    Suscripcion.find({id_usuario : idToken}).count() || 0 
                 ]);
+                
             }
         }
-        
+        // const arraySus = [];
+        // for (let i = 0; i < suscripcion.length; i++) {
+        //     arraySus[i] = suscripcion[i]._id;
+        // }
+        // platos = await Plato.find({ id_suscripcion:{$in:arraySus}});
         return res.status(201).json({
             ok: true,
             msg: "Obtención de suscripciones",
@@ -161,6 +167,11 @@ const borrarSuscripcion = async (req,res) =>{
                 msg: "No existe una suscripcion con ese id"
             }); 
         } 
+        const platosSuscripcion = await Plato.find({id_suscripcion:id});
+            for (let i = 0; i < platosSuscripcion.length; i++) {
+                await borrarImagen(platosSuscripcion[i].imagen.public_id);
+                await Plato.findByIdAndDelete(platosSuscripcion[i]._id.toString());
+            }
         const suscripcion = await Suscripcion.findByIdAndRemove(id);
         return res.status(201).json({
             ok: true,
