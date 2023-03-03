@@ -12,6 +12,7 @@ router.post('/', [
     check('peso', 'El argumento peso es obligatorio').not().isEmpty().isNumeric(),
     check('avatar', 'El argumento avatar es opcional').isString().optional(),
     check('estado_animico', 'El argumento estado_animico es opcional').isNumeric().optional(),
+    check('objetivo', 'El argumento objetivo es opcional').isNumeric().optional(),
     validarCampos
 ], crearUsuario);
 
@@ -27,6 +28,7 @@ router.put('/:id', [
     check('avatar', 'El argumento avatar es opcional').isString().optional(),
     check('peso', 'El argumento peso es opcional').isNumeric().optional(),
     check('estado_animico', 'El argumento estado_animico es opcional').isNumeric().optional(),
+    check('objetivo', 'El argumento objetivo es opcional').isNumeric().optional(),
     validarCampos
 ], actualizarUsuario);
 

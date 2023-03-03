@@ -29,6 +29,10 @@ const UsuarioSchema = Schema({
     estado_animico:{
         type: Number,
         default: 5
+    },
+    objetivo:{
+        type: Number,
+        default: 4
     }
 }, { collection: 'usuarios' });
 

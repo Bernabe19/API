@@ -90,6 +90,9 @@ const crearUsuario = async(req,res) =>{
         if(object.avatar){
             objetoUsuario.avatar = object.avatar;
         }
+        if(object.objetivo){
+            objetoUsuario.objetivo = object.objetivo;
+        }
         const usuario = new Usuario(objetoUsuario);
         await usuario.save();
         return res.status(201).json({
@@ -158,7 +161,10 @@ const actualizarUsuario = async(req, res = response) => {
             existeIdUsuario.peso = object.peso ;
         }
         if(object.estado_animico){
-            existeIdUsuario.estado_animico = object.estado_animico ;
+            existeIdUsuario.estado_animico = object.estado_animico;
+        }
+        if(object.objetivo){
+            existeIdUsuario.objetivo = object.objetivo;
         }
         const usuario = await Usuario.findByIdAndUpdate(uid, existeIdUsuario, { new: true });
         await usuario.save();
