@@ -1,6 +1,6 @@
 const { Router } = require('express');
 const { check } = require('express-validator');
-const { obtenerPlato, crearPlato, borrarPlato, actualizarPlato } = require('../controllers/platos');
+const { obtenerPlato, crearPlato, borrarPlato, actualizarPlato, predecirPrueba } = require('../controllers/platos');
 const { validarCampos } = require('../middleware/validarcampos');
 const { validarJWT } = require('../middleware/validarjwt');
 
@@ -40,4 +40,7 @@ router.delete('/:id', [
     validarCampos
 ], borrarPlato);
 
+router.post("/predecir",[
+
+], predecirPrueba)
 module.exports = router;

@@ -66,6 +66,23 @@ const obtenerUsuario = async(req,res) =>{
         });
     }
 }
+
+const obtenerNombresUsuario = async(req,res = response) =>{
+    try {
+        const usuarios = await Usuario.find({},{nombreUsuario:1, _id:0})
+        return res.status(201).json({
+            ok: true,
+            msg: 'Obtención de nombres de Usuarios',
+            usuarios
+        });
+    } catch (error) {
+        console.log(error);
+        return res.status().json({
+            ok: false,
+            msg: 'Error al recuperar los nombres de usuario'
+        })
+    }
+}   
 const crearUsuario = async(req,res) =>{
     const { nombreUsuario, password, ...object } = req.body;
     try {
@@ -286,4 +303,4 @@ const cambiarContrasena = async(req, res = response) =>{
         })
     }
 }
-module.exports = { obtenerUsuario, crearUsuario, actualizarUsuario, borrarUsuario, cambiarContrasena};
+module.exports = { obtenerUsuario, obtenerNombresUsuario, crearUsuario, actualizarUsuario, borrarUsuario, cambiarContrasena};

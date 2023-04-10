@@ -3,6 +3,7 @@ const { infoToken } = require('../helpers/infotoken');
 const Suscripcion = require('../models/suscripcion');
 const Plato = require('../models/plato');
 const { subirImagen, borrarImagen } = require('../configuracion/configcloudinary');
+const { prediccion } = require('../helpers/prediccion');
 
 const obtenerPlato = async(req,res) =>{
     const id = req.query.id;
@@ -230,5 +231,13 @@ const borrarPlato = async(req, res = response) => {
         });
     }
 }
+const predecirPrueba = async(req, res = response) => {
+    const pred = prediccion();
+    return res.status(200).json({
+        ok:true,
+        msg:"hola"
+    });
 
-module.exports = { obtenerPlato, crearPlato, borrarPlato, actualizarPlato};
+}
+
+module.exports = { obtenerPlato, crearPlato, borrarPlato, actualizarPlato, predecirPrueba};
