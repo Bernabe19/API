@@ -3,7 +3,6 @@ const { infoToken } = require('../helpers/infotoken');
 const Suscripcion = require('../models/suscripcion');
 const Plato = require('../models/plato');
 const { subirImagen, borrarImagen } = require('../configuracion/configcloudinary');
-const { prediccion } = require('../helpers/prediccion');
 
 const obtenerPlato = async(req,res) =>{
     const id = req.query.id;
@@ -35,7 +34,7 @@ const obtenerPlato = async(req,res) =>{
             }
             [plato, total] = await Promise.all([
                 Plato.findById(id),
-                Plato.find({id_usuario:idToken}).count() 
+                Plato.find({id_usuario:idToken}).count()
             ]);
         }else if(suscripcion){
             const existeSuscripcion = Suscripcion.findById(suscripcion);
@@ -47,12 +46,12 @@ const obtenerPlato = async(req,res) =>{
             }
             [plato, total] = await Promise.all([
                 Plato.find({id_suscripcion : suscripcion}),
-                Plato.find({id_suscripcion:suscripcion}).count() 
+                Plato.find({id_suscripcion:suscripcion}).count()
             ]);
         }else if(!id){
             [plato, total] = await Promise.all([
                 Plato.find({id_usuario:idToken}),
-                Plato.find({id_usuario:idToken}).count() 
+                Plato.find({id_usuario:idToken}).count()
             ]);
         }
         return res.status(201).json({
@@ -99,7 +98,7 @@ const crearPlato = async(req,res) =>{
         objetoPlato.id_suscripcion = id_suscripcion;
         objetoPlato.id_usuario = idToken;
         objetoPlato.nombre = object.nombre;
-        objetoPlato.cantidad = object.cantidad;
+        objetoPlato.calorias = object.calorias;
         objetoPlato.proteinas = object.proteinas;
         objetoPlato.carbohidratos = object.carbohidratos;
         objetoPlato.grasas = object.grasas;
@@ -114,16 +113,16 @@ const crearPlato = async(req,res) =>{
             ok: true,
             msg: 'Plato creado correctamente',
             plato
-        });   
+        });
     } catch (error) {
         console.log(error);
         return res.status(400).json({
             ok: false,
             msg: 'Ha habido un error al crear el plato'
-        });  
+        });
     }
 
-} 
+}
 
 const actualizarPlato = async(req, res = response) => {
 
@@ -131,7 +130,7 @@ const actualizarPlato = async(req, res = response) => {
     const uid = req.params.id;
     const token = req.header('x-token');
     try {
-        const tokenId = infoToken(token).uid; 
+        const tokenId = infoToken(token).uid;
         const existeIdPlato = await Plato.findById(uid);
         const existeUsuarioToken = await Usuario.findById(tokenId);
 
@@ -155,10 +154,10 @@ const actualizarPlato = async(req, res = response) => {
         }
 
         if(object.nombre){
-            existeIdPlato.nombre = nombre;
-        } 
-        if(object.cantidad){
-            existeIdPlato.cantidad = object.cantidad ;
+            existeIdPlato.nombre = object.nombre;
+        }
+        if(object.calorias){
+            existeIdPlato.calorias = object.calorias ;
         }
         if(object.proteinas){
             existeIdPlato.proteinas = object.proteinas ;
@@ -190,7 +189,7 @@ const borrarPlato = async(req, res = response) => {
 
     const uid = req.params.id;
     const token = req.header('x-token');
-        
+
     try {
         const tokenId = infoToken(token).uid;
         const tokenRol = infoToken(token).rol;

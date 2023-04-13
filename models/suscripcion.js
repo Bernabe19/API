@@ -17,6 +17,7 @@ const SuscripcionSchema = Schema({
     },
     fecha_fin: {
         type: Date,
+        default: new Date(),
     },
     peso: {
         type: Number,

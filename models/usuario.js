@@ -14,10 +14,6 @@ const UsuarioSchema = Schema({
         type: String,
         required: true,
     },
-    avatar: {
-        type: String,
-        default: "avatar1"
-    },
     rol: {
         type: String,
         default: "usuario"
@@ -31,7 +27,7 @@ const UsuarioSchema = Schema({
     },
     objetivo:{
         type: Number,
-        default: 4
+        required:true
     }
 }, { collection: 'usuarios' });
 

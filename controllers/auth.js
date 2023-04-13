@@ -30,7 +30,7 @@ const token = async(req, res = response) => {
             peso: usuarioBD.peso,
             estado_animico: usuarioBD.estado_animico,
             rol: rolBD,
-            avatar: usuarioBD.avatar,
+            objetivo: usuarioBD.objetivo,
             token: nuevoToken
         });
     } catch {

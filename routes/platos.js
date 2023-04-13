@@ -9,10 +9,10 @@ const router = Router();
 router.post('/', [
     check('id_suscripcion', 'El argumento id_suscripcion es obligatorio').not().isEmpty().isMongoId(),
     check('nombre', 'El argumento nombre es obligatorio').not().isEmpty().isString(),
-    check('cantidad', 'El argumento cantidad es obligatorio').not().isEmpty().isNumeric(),
+    check('calorias', 'El argumento cantidad es obligatorio').not().isEmpty().isNumeric(),
     check('proteinas', 'El argumento proteinas es obligatorio').not().isEmpty().isNumeric(),
     check('carbohidratos', 'El argumento carbohidratos es obligatorio').not().isEmpty().isNumeric(),
-    check('grasas', 'El argumento grasas es obligatorio').not().isEmpty().isNumeric(),    
+    check('grasas', 'El argumento grasas es obligatorio').not().isEmpty().isNumeric(),
     check('imagen', 'El argumento iamgen es obligatorio').not().isEmpty(),
     validarCampos
 ], crearPlato);
@@ -20,7 +20,7 @@ router.post('/', [
 router.put('/:id', [
     validarJWT,
     check('nombre', 'El argumento nombre de usuario es opcional').isString().optional(),
-    check('cantidad', 'El argumento cantidad es opcional').isNumeric().optional(),
+    check('calorias', 'El argumento cantidad es opcional').isNumeric().optional(),
     check('proteinas', 'El argumento proteinas es opcional').isNumeric().optional(),
     check('carbohidratos', 'El argumento carbohidratos es opcional').isNumeric().optional(),
     check('grasas', 'El argumento grasas es opcional').isNumeric().optional(),

@@ -15,7 +15,7 @@ const PlatoSchema = Schema({
         type: String,
         required: true,
     },
-    cantidad: {
+    calorias: {
         type: Number,
         required: true,
     },
@@ -32,7 +32,7 @@ const PlatoSchema = Schema({
         required: true
     },
     imagen:{
-        
+
     },
     fecha:{
         type: Date,

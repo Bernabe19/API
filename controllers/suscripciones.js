@@ -41,25 +41,25 @@ const obtenerSuscripcion = async(req,res) =>{
             }
             [suscripcion, total] = await Promise.all([
                 Suscripcion.findById(id),
-                Suscripcion.find({id_usuario : idToken}).count() || 0 
+                Suscripcion.find({id_usuario : idToken}).count() || 0
             ]);
         }else{
             if(fecha1 && fecha2){
                 [suscripcion, total] = await Promise.all([
                     Suscripcion.find({$and: [{fecha_inicio: {$gte: fecha1Mod}},{fecha_inicio: {$lte: fecha2Mod}}]}).populate('id_plan','nombre caracteristicas').sort({fecha_inicio : "desc"}).exec(),
-                    Suscripcion.find({id_usuario : idToken}).count() || 0 
-                ]); 
+                    Suscripcion.find({id_usuario : idToken}).count() || 0
+                ]);
             }else if(fecha1){
                 [suscripcion, total] = await Promise.all([
                     Suscripcion.find({fecha_inicio:{$gte: fecha1Mod}}).populate('id_plan','nombre caracteristicas').sort({fecha_inicio : "desc"}).exec(),
-                    Suscripcion.find({id_usuario : idToken}).count() || 0 
+                    Suscripcion.find({id_usuario : idToken}).count() || 0
                 ]);
             }else{
                 [suscripcion, total] = await Promise.all([
                     Suscripcion.find({id_usuario : idToken}).populate('id_plan','nombre caracteristicas').sort({fecha_inicio : "desc"}).exec(),
-                    Suscripcion.find({id_usuario : idToken}).count() || 0 
+                    Suscripcion.find({id_usuario : idToken}).count() || 0
                 ]);
-                
+
             }
         }
         // const arraySus = [];
@@ -95,30 +95,31 @@ const crearSuscripcion = async (req,res) =>{
             return res.status(404).json({
                 ok: false,
                 msg: "No existe un usuario con ese id Token"
-            }); 
+            });
         }
         if(!existeUsuarioParam){
             return res.status(404).json({
                 ok: false,
                 msg: "No existe un usuario con ese id Body"
-            }); 
+            });
         }
         if(id_usuario !== idToken){
             return res.status(403).json({
                 ok: false,
                 msg: "No puede crear la suscripcion a otro usuario"
-            }); 
+            });
         }
         if(!existePlan){
             return res.status(404).json({
                 ok: false,
                 msg: "No existe un plan con ese id"
-            }); 
+            });
         }
         const existeSuscripcionAnterior = await Suscripcion.findOne({ $and: [ { id_usuario: idToken }, { activa: true} ] });
         console.log(existeSuscripcionAnterior);
         if(existeSuscripcionAnterior){
             existeSuscripcionAnterior.activa = false;
+            existeSuscripcionAnterior.fecha_fin = new Date();
            await Suscripcion.findByIdAndUpdate(existeSuscripcionAnterior._id.toString(), existeSuscripcionAnterior, { new: true });
         }
         const peso = existeUsuarioParam.peso;
@@ -132,13 +133,13 @@ const crearSuscripcion = async (req,res) =>{
             ok: true,
             msg: 'Suscripcion creada correctamente',
             suscripcion
-        });   
+        });
     } catch (error) {
         console.log(error);
         return res.status(400).json({
             ok: false,
             msg: 'Ha habido un error al crear la suscripcion'
-        });  
+        });
     }
 }
 const borrarSuscripcion = async (req,res) =>{
@@ -153,20 +154,20 @@ const borrarSuscripcion = async (req,res) =>{
             return res.status(404).json({
                 ok: false,
                 msg: "No existe un plan con ese id"
-            }); 
-        } 
+            });
+        }
         if(existeIdTokenUsuario.rol !== "admin" || rolToken !== "admin"){
             return res.status(403).json({
                 ok: false,
                 msg: "Solo un administrador puede borrar un suscripcion"
-            }); 
+            });
         }
         if(!existeSuscripcion){
             return res.status(404).json({
                 ok: false,
                 msg: "No existe una suscripcion con ese id"
-            }); 
-        } 
+            });
+        }
         const platosSuscripcion = await Plato.find({id_suscripcion:id});
             for (let i = 0; i < platosSuscripcion.length; i++) {
                 await borrarImagen(platosSuscripcion[i].imagen.public_id);
@@ -177,13 +178,13 @@ const borrarSuscripcion = async (req,res) =>{
             ok: true,
             msg: 'Suscripcion eliminada correctamente',
             suscripcion
-        });   
+        });
     } catch (error) {
         console.log(error);
         return res.status(400).json({
             ok: false,
             msg: 'Ha habido un error al borrar la suscripcion'
-        });  
+        });
     }
 
 }

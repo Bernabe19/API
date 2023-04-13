@@ -38,7 +38,7 @@ const obtenerUsuario = async(req,res) =>{
             }
             [usuario, total] = await Promise.all([
                 Usuario.findById(id),
-                Usuario.count() 
+                Usuario.count()
             ]);
         }else if(!id){
             if(rolToken !== "admin" || usuarioToken.rol !== "admin"){
@@ -49,7 +49,7 @@ const obtenerUsuario = async(req,res) =>{
             }
             [usuario, total] = await Promise.all([
                 Usuario.find(),
-                Usuario.count() 
+                Usuario.count()
             ]);
         }
         return res.status(201).json({
@@ -82,7 +82,7 @@ const obtenerNombresUsuario = async(req,res = response) =>{
             msg: 'Error al recuperar los nombres de usuario'
         })
     }
-}   
+}
 const crearUsuario = async(req,res) =>{
     const { nombreUsuario, password, ...object } = req.body;
     try {
@@ -116,16 +116,16 @@ const crearUsuario = async(req,res) =>{
             ok: true,
             msg: 'Usuario creado correctamente',
             usuario
-        });   
+        });
     } catch (error) {
         console.log(error);
         return res.status(400).json({
             ok: false,
             msg: 'Ha habido un error al crear el usuario'
-        });  
+        });
     }
 
-} 
+}
 
 const actualizarUsuario = async(req, res = response) => {
 
@@ -133,7 +133,7 @@ const actualizarUsuario = async(req, res = response) => {
     const uid = req.params.id;
     const token = req.header('x-token');
     try {
-        const tokenId = infoToken(token).uid; 
+        const tokenId = infoToken(token).uid;
         const tokenRol = infoToken(token).rol;
         const existeUsuario = await Usuario.findOne({ nombreUsuario: nombreUsuario });
         const existeIdUsuario = await Usuario.findById(uid);
@@ -170,7 +170,7 @@ const actualizarUsuario = async(req, res = response) => {
 
         if(nombreUsuario){
             existeIdUsuario.nombreUsuario = nombreUsuario;
-        } 
+        }
         if(object.avatar){
             existeIdUsuario.avatar = object.avatar ;
         }
@@ -180,7 +180,7 @@ const actualizarUsuario = async(req, res = response) => {
         if(object.estado_animico){
             existeIdUsuario.estado_animico = object.estado_animico;
         }
-        if(object.objetivo){
+        if(typeof(object.objetivo) === "number"){
             existeIdUsuario.objetivo = object.objetivo;
         }
         const usuario = await Usuario.findByIdAndUpdate(uid, existeIdUsuario, { new: true });
@@ -204,7 +204,7 @@ const borrarUsuario = async(req, res = response) => {
 
     const uid = req.params.id;
     const token = req.header('x-token');
-        
+
     try {
         const tokenId = infoToken(token).uid;
         const tokenRol = infoToken(token).rol;
@@ -294,7 +294,7 @@ const cambiarContrasena = async(req, res = response) =>{
                     msg: 'Contraseña cambiada correctamente'
                 });
             }
-        });    
+        });
     } catch (error) {
         console.log(error);
         return res.status(400).json({
