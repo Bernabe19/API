@@ -1,12 +1,15 @@
 const Usuario = require('../models/usuario');
 const { infoToken } = require('../helpers/infotoken');
 const Suscripcion = require('../models/suscripcion');
+const Plan = require('../models/plan');
 const Plato = require('../models/plato');
 const { subirImagen, borrarImagen } = require('../configuracion/configcloudinary');
 
 const obtenerPlato = async(req,res) =>{
     const id = req.query.id;
     const suscripcion = req.query.suscripcion;
+    const nombrePlan = req.query.nombrePlan;
+    const ordenFecha = req.query.ordenFecha;
     const token = req.header('x-token');
     try {
         let plato, total;
@@ -48,9 +51,26 @@ const obtenerPlato = async(req,res) =>{
                 Plato.find({id_suscripcion : suscripcion}),
                 Plato.find({id_suscripcion:suscripcion}).count()
             ]);
+        }else if(nombrePlan && ordenFecha){
+          const plan = await Plan.find({nombre:nombrePlan});
+          const idPlan = plan[0]._id.toString();
+          const suscripcionPlan = await Suscripcion.find({id_plan:idPlan});
+          let idSuscripciones = [];
+          for (var i = 0; i < suscripcionPlan.length; i++) {
+            idSuscripciones.push(suscripcionPlan[i]._id);
+          }
+          [plato, total] = await Promise.all([
+              Plato.find({$and:[{id_usuario:idToken},{id_suscripcion:{ $in: idSuscripciones}}]}).sort({fecha:ordenFecha}),
+              Plato.find({id_usuario:idToken}).count()
+          ]);
+        }else if(ordenFecha){
+          [plato, total] = await Promise.all([
+              Plato.find({id_usuario:idToken}).sort({fecha:String(ordenFecha)}),
+              Plato.find({id_usuario:idToken}).count()
+          ]);
         }else if(!id){
             [plato, total] = await Promise.all([
-                Plato.find({id_usuario:idToken}),
+                Plato.find({id_usuario:idToken}).sort({fecha:"desc"}),
                 Plato.find({id_usuario:idToken}).count()
             ]);
         }
