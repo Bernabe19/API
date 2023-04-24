@@ -28,6 +28,7 @@ app.use('/api/usuarios', require('./routes/usuarios'));
 app.use('/api/planes', require('./routes/planes'));
 app.use('/api/suscripciones', require('./routes/suscripciones'));
 app.use('/api/platos', require('./routes/platos'));
+app.use('/api/informacion', require('./routes/informacion'));
 
 
 require('dotenv').config();

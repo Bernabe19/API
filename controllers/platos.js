@@ -122,6 +122,7 @@ const crearPlato = async(req,res) =>{
         objetoPlato.proteinas = object.proteinas;
         objetoPlato.carbohidratos = object.carbohidratos;
         objetoPlato.grasas = object.grasas;
+        objetoPlato.estado_animico = existeUsuario.estado_animico;
         const plato = new Plato(objetoPlato);
         const subidaImagen = await subirImagen(imagen);
         plato.imagen = {

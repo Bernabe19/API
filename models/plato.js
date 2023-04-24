@@ -37,6 +37,9 @@ const PlatoSchema = Schema({
     fecha:{
         type: Date,
         default: new Date()
+    },
+    estado_animico:{
+      type: Number
     }
 }, { collection: 'platos' });
 

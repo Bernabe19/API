@@ -177,7 +177,7 @@ const actualizarUsuario = async(req, res = response) => {
         if(object.peso){
             existeIdUsuario.peso = object.peso ;
         }
-        if(object.estado_animico){
+        if(typeof(object.estado_animico) === "number"){
             existeIdUsuario.estado_animico = object.estado_animico;
         }
         if(typeof(object.objetivo) === "number"){
